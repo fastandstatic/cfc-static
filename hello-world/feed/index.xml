@@ -7,8 +7,8 @@
 	>
 <channel>
 	<title>
-	Comentarios en: Hello world!	</title>
-	<atom:link href="https://l.carlosfernandezdecastro.com/hello-world/feed/" rel="self" type="application/rss+xml" />
+	Comments on: Hello world!	</title>
+	<atom:link href="https://l.carlosfernandezdecastro.com/hello-world/feed/?simply_static_page=3634" rel="self" type="application/rss+xml" />
 	<link>https://l.carlosfernandezdecastro.com/hello-world/</link>
 	<description>Just another WordPress site</description>
 	<lastBuildDate>Wed, 05 Oct 2022 13:21:16 +0000</lastBuildDate>
@@ -19,7 +19,7 @@
 	<generator>https://wordpress.org/?v=6.1.1</generator>
 	<item>
 		<title>
-		Por: A WordPress Commenter		</title>
+		By: A WordPress Commenter		</title>
 		<link>https://l.carlosfernandezdecastro.com/hello-world/#comment-1</link>
 
 		<dc:creator><![CDATA[A WordPress Commenter]]></dc:creator>

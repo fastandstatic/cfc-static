@@ -2,10 +2,7 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://l.carlosfernandezdecastro.com/</loc>
-		<lastmod>2023-01-26T13:37:41+00:00</lastmod>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Grupo-2016.png</image:loc>
-		</image:image>
+		<lastmod>2023-01-26T13:59:03+00:00</lastmod>
 		<image:image>
 			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/dentista-1.png</image:loc>
 		</image:image>
@@ -110,55 +107,6 @@
 		</image:image>
 		<image:image>
 			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/elementor/thumbs/despues2-pw7kfczc1omtr2hvv54y6azlklyp8km9174836ub7w.jpg</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Grupo-2016.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Grupo-2016.png</image:loc>
-		</image:image>
-	</url>
-	<url>
-		<loc>https://l.carlosfernandezdecastro.com/elementor-6/</loc>
-		<lastmod>2023-01-17T21:52:18+00:00</lastmod>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Grupo-2016.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/elementor/thumbs/Enmascarar-grupo-12-pvrdk8lumgh51ijq2vlrwrt1nasywwuje46ry4ak1s.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Enmascarar-grupo-12.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Enmascarar-grupo-14.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/resina.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Enmascarar-grupo-15.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Enmascarar-grupo-16-1.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/antes3.jpg</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/despues3.jpg</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/despues1.jpg</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/antes1.jpg</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/antes2.jpg</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/despues2.jpg</image:loc>
 		</image:image>
 		<image:image>
 			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Grupo-2016.png</image:loc>

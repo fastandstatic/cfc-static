@@ -2,19 +2,7 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://l.carlosfernandezdecastro.com/</loc>
-		<lastmod>2023-03-09T19:56:22+00:00</lastmod>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/dentista-1.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/Grupo-2052.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/personalizar.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/diente.png</image:loc>
-		</image:image>
+		<lastmod>2023-08-01T15:17:18+00:00</lastmod>
 		<image:image>
 			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2022/10/Enmascarar-grupo-12.png</image:loc>
 		</image:image>
@@ -41,27 +29,6 @@
 		</image:image>
 		<image:image>
 			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/Enmascarar-Tgrupo-14.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/CFC-Landing-3WEB.webp</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/CFC-Landing-8WEB.webp</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/Enmascarar-grupo-14WEB.webp</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/Enmascarar-grupo-14.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/Enmascarar-grupo-14T.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/Enmascarar-grupo-14-1.png</image:loc>
-		</image:image>
-		<image:image>
-			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/Enmascarar-grupo-14T.png</image:loc>
 		</image:image>
 		<image:image>
 			<image:loc>https://l.carlosfernandezdecastro.com/wp-content/uploads/2023/01/CFC-Landing-3WEB.webp</image:loc>

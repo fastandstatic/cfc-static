@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.10.1 - 09-01-2023 */
+/*! elementor-pro - v3.17.0 - 01-11-2023 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -1543,10 +1543,20 @@ module.exports = function () {
     elements.$locationWrapper.toggle('section' === elements.$templateTypeInput.val());
     elements.$postTypeWrapper.toggle('single' === elements.$templateTypeInput.val());
   };
+  const setPostType = () => {
+    const postTypeMap = {
+      'error-404': 'not_found404'
+    };
+    const postType = postTypeMap[elements.$templateTypeInput.val()] || '';
+    elements.$postTypeWrapper.find('select').val(postType);
+  };
   var run = function () {
     setElements();
     setLocationFieldVisibility();
-    elements.$templateTypeInput.on('change', setLocationFieldVisibility);
+    elements.$templateTypeInput.on('change', () => {
+      setLocationFieldVisibility();
+      setPostType();
+    });
   };
   this.init = function () {
     if (!window.elementorNewTemplate) {

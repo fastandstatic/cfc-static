@@ -1,8 +1,8 @@
-( function( $, elementorFrontend ) {
+( function( $ ) {
 
 	'use strict';
 
-	var JetPopupFrontend = {
+	window.JetPopupFrontend = {
 
 		addedScripts: {},
 
@@ -11,101 +11,63 @@
 		addedAssetsPromises: [],
 
 		init: function() {
-			var $popup_list = $( '.jet-popup:not(.jet-popup--single-preview)' ),
-				editMode    = Boolean( elementorFrontend.isEditMode() );
+			let $popup_list = $( '.jet-popup.jet-popup--front-mode' );
 
-			if ( ! editMode ) {
-				$popup_list.each( function( index ) {
-					var $target  = $( this ),
-						instance = null,
-						settings = $target.data( 'settings' );
+			$popup_list.each( function( index ) {
+				let $target  = $( this ),
+					instance = null,
+					settings = $target.data( 'settings' );
 
-					instance = new window.jetPopup( $target, settings );
-					instance.init();
-				} );
-			}
-
-			elementorFrontend.hooks.addAction( 'frontend/element_ready/widget', JetPopupFrontend.elementorWidget );
-
-			var widgets = {
-				'jet-popup-action-button.default' : JetPopupFrontend.widgetPopupActionButton,
-				'jet-popup-mailchimp.default' : JetPopupFrontend.widgetPopupMailchimp
-			};
-
-			$.each( widgets, function( widget, callback ) {
-				elementorFrontend.hooks.addAction( 'frontend/element_ready/' + widget, callback );
-			});
-
-			$( window ).on( 'jet-popup/ajax/frontend-init', ( event, payload ) => {
-				JetPopupFrontend.maybeElementorFrontendInit( payload.$container );
+				instance = new window.jetPopup( $target, settings );
+				instance.init();
 			} );
 
+			JetPopupFrontend.initAttachedPopups();
+
+			JetPopupFrontend.initBlocks();
+
+			$( window ).on( 'jet-popup/ajax/frontend-init', ( event, payload ) => {
+
+				switch ( payload.contentType ) {
+					case 'elementor':
+						JetPopupFrontend.maybeElementorFrontendInit( payload.$container );
+						break;
+					case 'default':
+						JetPopupFrontend.maybeDefaultFrontendInit( payload );
+						break
+				}
+			} );
 		},
 
-		elementorWidget: function( $scope ) {
-			var widget_id     = $scope.data( 'id' ),
-				widgetType    = $scope.data( 'element_type' ),
-				widgetsData   = jetPopupData.elements_data.widgets,
-				popupSettings = $scope.data( 'jet-popup' ) || false;
+		initAttachedPopups: function ( $scope ) {
+			$scope = $scope || $( 'body' );
 
-			if ( widgetsData.hasOwnProperty( widget_id ) || popupSettings ) {
-				var widgetData     = widgetsData[ widget_id ] || popupSettings,
-					opentEvent     = widgetData[ 'trigger-type' ],
-					customSelector = widgetData[ 'trigger-custom-selector' ],
-					popupData      = {
-						popupId: widgetData[ 'attached-popup' ]
+			$scope.find( '[data-popup-instance]' ).each( ( index, el ) => {
+				let $this = $( el ),
+					popupId = $this.data( 'popup-instance' ) || 'none',
+					triggerType = $this.data( 'popup-trigger-type' ) || 'none',
+					clickedCustomClass = $this.data( 'popup-custom-selector' ) || '',
+					popupData = {
+						popupId: `jet-popup-${ popupId }`,
 					};
 
-				if ( $scope.hasClass( 'jet-popup-attach-event-inited' ) ) {
-					return false;
+				if ( $this.hasClass( 'jet-popup-attach-event-inited' ) ) {
+					return;
 				}
 
-				$scope.addClass( 'jet-popup-attach-event-inited' );
+				$this.addClass( 'jet-popup-attach-event-inited' );
 
-				switch( opentEvent ) {
+				switch( triggerType ) {
 					case 'click-self':
-						$scope.addClass( 'jet-popup-cursor-pointer' );
+						$this.addClass( 'jet-popup-cursor-pointer' );
 
-						$scope.on( 'click.JetPopup', function( event ) {
+						$this.on( 'click.JetPopup', function( event ) {
 							event.preventDefault();
-
-							var $target = $( this );
-
-							if ( window.elementorFrontend.hooks ) {
-								popupData = elementorFrontend.hooks.applyFilters(
-									'jet-popup/widget-extensions/popup-data',
-									popupData,
-									widgetData,
-									$scope,
-									event
-								);
-							}
 
 							$( window ).trigger( {
 								type: 'jet-popup-open-trigger',
-								popupData: popupData
-							} );
-
-							return false;
-						} );
-						break;
-					case 'click':
-						$scope.on( 'click.JetPopup', '.elementor-button, .jet-button__instance .jet-popup-action-button__instance', function( event ) {
-							event.preventDefault();
-
-							if ( window.elementorFrontend.hooks ) {
-								popupData = elementorFrontend.hooks.applyFilters(
-									'jet-popup/widget-extensions/popup-data',
-									popupData,
-									widgetData,
-									$scope,
-									event
-								);
-							}
-
-							$( window ).trigger( {
-								type: 'jet-popup-open-trigger',
-								popupData: popupData
+								popupData: popupData,
+								triggeredBy: $this,
 							} );
 
 							return false;
@@ -113,29 +75,16 @@
 						break;
 					case 'click-selector':
 
-						if ( '' !== customSelector ) {
-							$( customSelector ).addClass( 'jet-popup-cursor-pointer' );
+						if ( '' !== clickedCustomClass ) {
+							$this.find( clickedCustomClass ).addClass( 'jet-popup-cursor-pointer' );
 
-							$scope.on( 'click.JetPopup', customSelector, function( event ) {
+							$this.on( 'click.JetPopup', clickedCustomClass, function( event ) {
 								event.preventDefault();
-
-								var $target = $( event.currentTarget );
-
-								$target.addClass( 'jet-popup-cursor-pointer' );
-
-								if ( window.elementorFrontend.hooks ) {
-									popupData = elementorFrontend.hooks.applyFilters(
-										'jet-popup/widget-extensions/popup-data',
-										popupData,
-										widgetData,
-										$scope,
-										event
-									);
-								}
 
 								$( window ).trigger( {
 									type: 'jet-popup-open-trigger',
-									popupData: popupData
+									popupData: popupData,
+									triggeredBy: $this,
 								} );
 
 								return false;
@@ -143,55 +92,57 @@
 						}
 						break;
 					case 'hover':
-						$scope.on( 'mouseenter.JetPopup', function( event ) {
-
-							if ( window.elementorFrontend.hooks ) {
-								popupData = elementorFrontend.hooks.applyFilters(
-									'jet-popup/widget-extensions/popup-data',
-									popupData,
-									widgetData,
-									$scope,
-									event
-								);
-							}
+						$this.on( 'mouseenter.JetPopup', function( event ) {
 
 							$( window ).trigger( {
 								type: 'jet-popup-open-trigger',
-								popupData: popupData
+								popupData: popupData,
+								triggeredBy: $this,
 							} );
 						} );
 						break;
 					case 'scroll-to':
-						elementorFrontend.waypoint( $scope, function( event ) {
-
-							if ( window.elementorFrontend.hooks ) {
-								popupData = elementorFrontend.hooks.applyFilters(
-									'jet-popup/widget-extensions/popup-data',
-									popupData,
-									widgetData,
-									$scope,
-									event
-								);
-							}
-
-							$( window ).trigger( {
-								type: 'jet-popup-open-trigger',
-								popupData: popupData
-							} );
-						}, {
+						new Waypoint( {
+							element: el,
+							handler: function( direction ) {
+								$( window ).trigger( {
+									type: 'jet-popup-open-trigger',
+									popupData: popupData,
+									triggeredBy: $this,
+								} );
+							},
 							offset: 'bottom-in-view'
 						} );
+
 						break;
 				}
-
-			}
-
+			} );
 		},
 
-		widgetPopupActionButton: function( $scope ) {
+		initBlocks: function( $scope ) {
+			$scope = $scope || $( 'body' );
+
+			window.JetPlugins.init( $scope, [
+				{
+					block: 'jet-popup/action-button',
+					callback: ( $scope ) => {
+						let $button    = $( '.jet-popup-action-button__instance', $scope ),
+							actionType = $scope.data( 'action-type' );
+
+						JetPopupFrontend.actionButtonHandle( $button, actionType );
+					}
+				}
+			] );
+		},
+
+		actionButtonBlock: function( $scope ) {
 			var $button    = $( '.jet-popup-action-button__instance', $scope ),
-				settings   = $button.data( 'settings' ),
-				actionType = settings['action-type'];
+				actionType = $scope.data( 'action-type' );
+
+			JetPopupFrontend.actionButtonHandle( $button, actionType );
+		},
+
+		actionButtonHandle: function ( $button, actionType = 'link' ) {
 
 			switch ( actionType ) {
 
@@ -200,7 +151,7 @@
 					$button.on( 'click.JetPopup', function( event ) {
 						event.preventDefault();
 
-						var $currentPopup = $button.closest( '.jet-popup ' ),
+						var $currentPopup = $button.closest( '.jet-popup' ),
 							link          = $( this ).attr( 'href' ),
 							target        = $( this ).attr( 'target' ),
 							popupId       = $currentPopup.attr( 'id' );
@@ -221,7 +172,7 @@
 
 						return false;
 					} );
-				break;
+					break;
 
 				case 'leave':
 					$button.on( 'click.JetPopup', function( event ) {
@@ -229,13 +180,13 @@
 
 						window.history.back();
 					} );
-				break;
+					break;
 
 				case 'close-popup':
 					$button.on( 'click.JetPopup', function( event ) {
 						event.preventDefault();
 
-						var $currentPopup = $button.closest( '.jet-popup ' ),
+						var $currentPopup = $button.closest( '.jet-popup' ),
 							popupId = $currentPopup.attr( 'id' );
 
 						$( window ).trigger( {
@@ -246,7 +197,7 @@
 							}
 						} );
 					} );
-				break;
+					break;
 
 				case 'close-all-popups':
 					$button.on( 'click.JetPopup', function( event ) {
@@ -269,13 +220,13 @@
 							} );
 						}
 					} );
-				break;
+					break;
 
 				case 'close-constantly':
 					$button.on( 'click.JetPopup', function( event ) {
 						event.preventDefault();
 
-						var $currentPopup = $button.closest( '.jet-popup ' ),
+						var $currentPopup = $button.closest( '.jet-popup' ),
 							popupId = $currentPopup.attr( 'id' );
 
 						$( window ).trigger( {
@@ -286,7 +237,7 @@
 							}
 						} );
 					} );
-				break;
+					break;
 
 				case 'close-all-constantly':
 					$button.on( 'click.JetPopup', function( event ) {
@@ -309,148 +260,7 @@
 							} );
 						}
 					} );
-				break;
-			}
-		},
-
-		widgetPopupMailchimp: function( $scope ) {
-			var $target               = $scope.find( '.jet-popup-mailchimp' ),
-				scoreId               = $scope.data( 'id' ),
-				settings              = $target.data( 'settings' ),
-				$subscribeForm        = $( '.jet-popup-mailchimp__form', $target ),
-				$fields                = $( '.jet-popup-mailchimp__fields', $target ),
-				$mailField            = $( '.jet-popup-mailchimp__mail-field', $target ),
-				$inputData            = $mailField.data( 'instance-data' ),
-				$submitButton         = $( '.jet-popup-mailchimp__submit', $target ),
-				$subscribeFormMessage = $( '.jet-popup-mailchimp__message', $target ),
-				invalidMailMessage    = 'Please specify a valid email',
-				timeout               = null,
-				ajaxRequest           = null,
-				$currentPopup         = $target.closest( '.jet-popup' );
-
-			$mailField.on( 'focus', function() {
-				$mailField.removeClass( 'mail-invalid' );
-			} );
-
-			$( document ).keydown( function( event ) {
-
-				if ( 13 === event.keyCode && $mailField.is( ':focus' ) ) {
-					subscribeHandle();
-
-					return false;
-				}
-			} );
-
-			$submitButton.on( 'click', function() {
-				subscribeHandle();
-
-				return false;
-			} );
-
-			self.subscribeHandle = function() {
-				var inputValue     = $mailField.val(),
-					sendData       = {
-						'email': inputValue,
-						'target_list_id': settings['target_list_id'] || '',
-						'data': $inputData
-					},
-					serializeArray = $subscribeForm.serializeArray(),
-					additionalFields = {};
-
-				if ( validateEmail( inputValue ) ) {
-
-					$.each( serializeArray, function( key, fieldData ) {
-						if ( 'email' === fieldData.name ) {
-							sendData[ fieldData.name ] = fieldData.value;
-						} else {
-							additionalFields[ fieldData.name ] = fieldData.value;
-						}
-					} );
-
-					sendData['additional'] = additionalFields;
-
-					ajaxRequest = jQuery.ajax( {
-						type: 'POST',
-						url: window.jetPopupData.ajax_url,
-						data: {
-							'action': 'jet_popup_mailchimp_ajax',
-							'data': sendData
-						},
-						beforeSend: function( jqXHR, ajaxSettings ) {
-							if ( null !== ajaxRequest ) {
-								ajaxRequest.abort();
-							}
-						},
-						error: function( jqXHR, ajaxSettings ) {
-
-						},
-						success: function( data, textStatus, jqXHR ) {
-							var successType   = data.type,
-								message       = data.message || '',
-								responceClass = 'jet-popup-mailchimp--response-' + successType;
-
-							$submitButton.removeClass( 'loading' );
-
-							$target.removeClass( 'jet-popup-mailchimp--response-error' );
-							$target.addClass( responceClass );
-
-							$( 'span', $subscribeFormMessage ).html( message );
-							$subscribeFormMessage.css( { 'visibility': 'visible' } );
-
-							timeout = setTimeout( function() {
-								$subscribeFormMessage.css( { 'visibility': 'hidden' } );
-								$target.removeClass( responceClass );
-							}, 10000 );
-
-							if ( settings['redirect'] ) {
-								window.location.href = settings['redirect_url'];
-							}
-
-							$( window ).trigger( {
-								type: 'jet-popup/mailchimp',
-								elementId: scoreId,
-								successType: successType,
-								inputData: $inputData
-							} );
-
-							if ( true === settings['close_popup_when_success'] && $currentPopup[0] && 'success' === successType ) {
-								var popupId = $currentPopup.attr( 'id' );
-
-								timeout = setTimeout( function() {
-									$( window ).trigger( {
-										type: 'jet-popup-close-trigger',
-										popupData: {
-											popupId: popupId,
-											constantly: false
-										}
-									} );
-								}, 3000 );
-
-							}
-						}
-					} );
-
-
-					$submitButton.addClass( 'loading' );
-				} else {
-					$mailField.addClass( 'mail-invalid' );
-
-					$target.addClass( 'jet-popup-mailchimp--response-error' );
-					$( 'span', $subscribeFormMessage ).html( invalidMailMessage );
-					$subscribeFormMessage.css( { 'visibility': 'visible' } );
-
-					timeout = setTimeout( function() {
-						$target.removeClass( 'jet-popup-mailchimp--response-error' );
-						$subscribeFormMessage.css( { 'visibility': 'hidden' } );
-						$mailField.removeClass( 'mail-invalid' );
-					}, 10000 );
-				}
-			}
-
-			function validateEmail( email ) {
-				var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-				return re.test( email );
+					break;
 			}
 		},
 
@@ -540,6 +350,15 @@
 				}
 			} );
 		},
+
+		maybeDefaultFrontendInit: function ( payload ) {
+			const contentElements = payload.contentElements || [],
+				$container = payload.$container;
+
+			$container.find( '[data-is-block*="/"]' ).each( ( index, el ) => {
+				window.JetPlugins.hooks.doAction( window.JetPlugins.hookNameFromBlock( el.dataset.isBlock ), jQuery( el ) );
+			} );
+		}
 	};
 
 	/**
@@ -556,17 +375,16 @@
 			id                     = popupSettings['id'],
 			popupId                = popupSettings['jet-popup-id'],
 			popupsLocalStorageData = {},
-			editMode               = Boolean( elementorFrontend.isEditMode() ),
+			//editMode               = Boolean( window.elementorFrontend.isEditMode() ),
 			isAnimation            = false,
 			isOpen                 = false,
 			ajaxGetContentHanler   = null,
 			ajaxContentLoaded      = false;
 
 		self.init = function() {
-
 			var popupAvailable = self.popupAvailableCheck();
 
-			if ( ! popupAvailable || editMode ) {
+			if ( ! popupAvailable ) {
 				return false;
 			}
 
@@ -668,15 +486,16 @@
 
 				case 'custom-selector':
 					self.onCustomSelector( popupSettings['custom-selector'] );
-				break;
+				break;$scope
 			}
 
 			$window.on( 'jet-popup-open-trigger', function( event ) {
 				var popupData   = event.popupData || {},
+					triggeredBy = event.triggeredBy || false,
 					popupUniqId = popupData.popupId || false;
 
 				if ( popupUniqId == popupId ) {
-					self.showPopup( popupData );
+					self.showPopup( popupData, triggeredBy );
 				}
 			});
 
@@ -687,7 +506,8 @@
 
 				if ( popupUniqId == popupId ) {
 					self.hidePopup( {
-						constantly: constantly
+						popupId: popupUniqId,
+						constantly: constantly,
 					} );
 				}
 			});
@@ -703,11 +523,13 @@
 		 * @return {[type]} [description]
 		 */
 		self.initCloseEvent = function() {
+
 			$popup.on( 'click', '.jet-popup__close-button', function( event ) {
 				var target = event.currentTarget;
 
 				self.hidePopup( {
-					constantly: popupSettings['show-once']
+					constantly: popupSettings['show-once'],
+					popupId: popupSettings['jet-popup-id']
 				} );
 			} );
 
@@ -716,7 +538,8 @@
 					var target = event.currentTarget;
 
 					self.hidePopup( {
-						constantly: popupSettings['show-once']
+						constantly: popupSettings['show-once'],
+						popupId: popupSettings['jet-popup-id']
 					} );
 				} );
 			}
@@ -726,7 +549,8 @@
 
 				if ( 27 === key && isOpen ) {
 					self.hidePopup( {
-						constantly: popupSettings['show-once']
+						constantly: popupSettings['show-once'],
+						popupId: popupSettings['jet-popup-id']
 					} );
 				}
 			} );
@@ -890,7 +714,7 @@
 				$( 'body' ).on( 'click', selector, function( event ) {
 					event.preventDefault();
 
-					self.showPopup( $( this ).data( 'popup' ) );
+					self.showPopup( $( this ).data( 'popup' ), $( this ) );
 				} );
 			}
 		}
@@ -900,7 +724,7 @@
 		 *
 		 * @return {void}
 		 */
-		self.showPopup = function( data ) {
+		self.showPopup = function( data, $trigger ) {
 			var popupData              = data || {},
 				animeOverlay           = null,
 				animeContainer         = null,
@@ -911,7 +735,9 @@
 					self.avaliableEffects[ 'fade' ][ 'show' ]
 				);
 
-			if ( ! self.popupAvailableCheck() || editMode ) {
+			$trigger = $trigger || false;
+
+			if ( ! self.popupAvailableCheck() ) {
 				return false;
 			}
 
@@ -922,6 +748,8 @@
 			if ( popupSettings['prevent-scrolling'] ) {
 				$( 'body' ).addClass( 'jet-popup-prevent-scroll' );
 			}
+
+			popupData = window.JetPlugins.hooks.applyFilters( 'jet-popup.show-popup.data', popupData, $popup, $trigger );
 
 			self.showContainer( popupData );
 		};
@@ -1002,7 +830,6 @@
 			}
 
 			if ( ajaxContentLoaded ) {
-
 				// Show Popup Container
 				animeContainerInstance = anime( animeContainer );
 
@@ -1060,12 +887,11 @@
 					}
 
 					if ( 'success' === successType ) {
-						let popupContent        = contentData['content'],
-						    popupScripts        = contentData['scripts'],
-						    popupStyles         = contentData['styles'],
+						let popupContent         = contentData['content'],
+							popupContentElements = contentData['contentElements'],
+						    popupScripts         = contentData['scripts'],
+						    popupStyles          = contentData['styles'],
 							popupAfterScripts   = contentData['afterScripts'];
-
-						console.log(popupStyles)
 
 						for ( let { handle: scriptHandler, src: scriptSrc } of popupScripts ) {
 							JetPopupFrontend.addedAssetsPromises.push( JetPopupFrontend.loadScriptAsync( scriptHandler, scriptSrc ) );
@@ -1101,18 +927,24 @@
 							$( window ).trigger( 'jet-popup/ajax/frontend-init/before', {
 								$container: $popupContainer,
 								content: popupContent,
+								contentElements: popupContentElements,
+								contentType: popupSettings['content-type'],
 							} );
 
 							// Frontend init
 							$( window ).trigger( 'jet-popup/ajax/frontend-init', {
 								$container: $popupContainer,
 								content: popupContent,
+								contentElements: popupContentElements,
+								contentType: popupSettings['content-type'],
 							} );
 
 							// after ajax frontend init
 							$( window ).trigger( 'jet-popup/ajax/frontend-init/after', {
 								$container: $popupContainer,
 								content: popupContent,
+								contentElements: popupContentElements,
+								contentType: popupSettings['content-type'],
 							} );
 
 							// Show Popup Container
@@ -1121,7 +953,6 @@
 						}, function( reason ) {
 							console.log( 'Assets Loaded Error' );
 						} );
-
 					}
 				}
 			} );
@@ -1163,7 +994,7 @@
 							if ( popupSettings['prevent-scrolling'] && !$( '.jet-popup--show-state' )[0] ) {
 								$( 'body' ).removeClass( 'jet-popup-prevent-scroll' );
 							}
-
+							console.log(popupData)
 							// After Popup Hide Action
 							$window.trigger( 'jet-popup/hide-event/after-hide', {
 								self: self,
@@ -1607,6 +1438,6 @@
 
 	}
 
-	$( window ).on( 'elementor/frontend/init', JetPopupFrontend.init );
+	window.JetPopupFrontend.init();
 
-}( jQuery, window.elementorFrontend ) );
+}( jQuery ) );

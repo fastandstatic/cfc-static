@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.10.1 - 09-01-2023 */
+/*! elementor-pro - v3.17.0 - 01-11-2023 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -36,7 +36,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var invariant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! invariant */ "../node_modules/invariant/browser.js");
 /* harmony import */ var invariant__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(invariant__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var create_react_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! create-react-context */ "../node_modules/create-react-context/lib/index.js");
+/* harmony import */ var create_react_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! create-react-context */ "../node_modules/@reach/router/node_modules/create-react-context/lib/index.js");
 /* harmony import */ var create_react_context__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(create_react_context__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react_lifecycles_compat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-lifecycles-compat */ "../node_modules/react-lifecycles-compat/react-lifecycles-compat.es.js");
 /* harmony import */ var _lib_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./lib/utils */ "../node_modules/@reach/router/es/lib/utils.js");
@@ -1264,6 +1264,238 @@ var shallowCompare = function shallowCompare(obj1, obj2) {
 
 /***/ }),
 
+/***/ "../node_modules/@reach/router/node_modules/create-react-context/lib/implementation.js":
+/*!*********************************************************************************************!*\
+  !*** ../node_modules/@reach/router/node_modules/create-react-context/lib/implementation.js ***!
+  \*********************************************************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _gud = __webpack_require__(/*! gud */ "../node_modules/gud/index.js");
+
+var _gud2 = _interopRequireDefault(_gud);
+
+var _warning = __webpack_require__(/*! warning */ "../node_modules/warning/warning.js");
+
+var _warning2 = _interopRequireDefault(_warning);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MAX_SIGNED_31_BIT_INT = 1073741823;
+
+// Inlined Object.is polyfill.
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+function objectIs(x, y) {
+  if (x === y) {
+    return x !== 0 || 1 / x === 1 / y;
+  } else {
+    return x !== x && y !== y;
+  }
+}
+
+function createEventEmitter(value) {
+  var handlers = [];
+  return {
+    on: function on(handler) {
+      handlers.push(handler);
+    },
+    off: function off(handler) {
+      handlers = handlers.filter(function (h) {
+        return h !== handler;
+      });
+    },
+    get: function get() {
+      return value;
+    },
+    set: function set(newValue, changedBits) {
+      value = newValue;
+      handlers.forEach(function (handler) {
+        return handler(value, changedBits);
+      });
+    }
+  };
+}
+
+function onlyChild(children) {
+  return Array.isArray(children) ? children[0] : children;
+}
+
+function createReactContext(defaultValue, calculateChangedBits) {
+  var _Provider$childContex, _Consumer$contextType;
+
+  var contextProp = '__create-react-context-' + (0, _gud2.default)() + '__';
+
+  var Provider = function (_Component) {
+    _inherits(Provider, _Component);
+
+    function Provider() {
+      var _temp, _this, _ret;
+
+      _classCallCheck(this, Provider);
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.emitter = createEventEmitter(_this.props.value), _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    Provider.prototype.getChildContext = function getChildContext() {
+      var _ref;
+
+      return _ref = {}, _ref[contextProp] = this.emitter, _ref;
+    };
+
+    Provider.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+      if (this.props.value !== nextProps.value) {
+        var oldValue = this.props.value;
+        var newValue = nextProps.value;
+        var changedBits = void 0;
+
+        if (objectIs(oldValue, newValue)) {
+          changedBits = 0; // No change
+        } else {
+          changedBits = typeof calculateChangedBits === 'function' ? calculateChangedBits(oldValue, newValue) : MAX_SIGNED_31_BIT_INT;
+          if (true) {
+            (0, _warning2.default)((changedBits & MAX_SIGNED_31_BIT_INT) === changedBits, 'calculateChangedBits: Expected the return value to be a ' + '31-bit integer. Instead received: %s', changedBits);
+          }
+
+          changedBits |= 0;
+
+          if (changedBits !== 0) {
+            this.emitter.set(nextProps.value, changedBits);
+          }
+        }
+      }
+    };
+
+    Provider.prototype.render = function render() {
+      return this.props.children;
+    };
+
+    return Provider;
+  }(_react.Component);
+
+  Provider.childContextTypes = (_Provider$childContex = {}, _Provider$childContex[contextProp] = _propTypes2.default.object.isRequired, _Provider$childContex);
+
+  var Consumer = function (_Component2) {
+    _inherits(Consumer, _Component2);
+
+    function Consumer() {
+      var _temp2, _this2, _ret2;
+
+      _classCallCheck(this, Consumer);
+
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return _ret2 = (_temp2 = (_this2 = _possibleConstructorReturn(this, _Component2.call.apply(_Component2, [this].concat(args))), _this2), _this2.state = {
+        value: _this2.getValue()
+      }, _this2.onUpdate = function (newValue, changedBits) {
+        var observedBits = _this2.observedBits | 0;
+        if ((observedBits & changedBits) !== 0) {
+          _this2.setState({ value: _this2.getValue() });
+        }
+      }, _temp2), _possibleConstructorReturn(_this2, _ret2);
+    }
+
+    Consumer.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+      var observedBits = nextProps.observedBits;
+
+      this.observedBits = observedBits === undefined || observedBits === null ? MAX_SIGNED_31_BIT_INT // Subscribe to all changes by default
+      : observedBits;
+    };
+
+    Consumer.prototype.componentDidMount = function componentDidMount() {
+      if (this.context[contextProp]) {
+        this.context[contextProp].on(this.onUpdate);
+      }
+      var observedBits = this.props.observedBits;
+
+      this.observedBits = observedBits === undefined || observedBits === null ? MAX_SIGNED_31_BIT_INT // Subscribe to all changes by default
+      : observedBits;
+    };
+
+    Consumer.prototype.componentWillUnmount = function componentWillUnmount() {
+      if (this.context[contextProp]) {
+        this.context[contextProp].off(this.onUpdate);
+      }
+    };
+
+    Consumer.prototype.getValue = function getValue() {
+      if (this.context[contextProp]) {
+        return this.context[contextProp].get();
+      } else {
+        return defaultValue;
+      }
+    };
+
+    Consumer.prototype.render = function render() {
+      return onlyChild(this.props.children)(this.state.value);
+    };
+
+    return Consumer;
+  }(_react.Component);
+
+  Consumer.contextTypes = (_Consumer$contextType = {}, _Consumer$contextType[contextProp] = _propTypes2.default.object, _Consumer$contextType);
+
+
+  return {
+    Provider: Provider,
+    Consumer: Consumer
+  };
+}
+
+exports["default"] = createReactContext;
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "../node_modules/@reach/router/node_modules/create-react-context/lib/index.js":
+/*!************************************************************************************!*\
+  !*** ../node_modules/@reach/router/node_modules/create-react-context/lib/index.js ***!
+  \************************************************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _react = __webpack_require__(/*! react */ "react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _implementation = __webpack_require__(/*! ./implementation */ "../node_modules/@reach/router/node_modules/create-react-context/lib/implementation.js");
+
+var _implementation2 = _interopRequireDefault(_implementation);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports["default"] = _react2.default.createContext || _implementation2.default;
+module.exports = exports['default'];
+
+/***/ }),
+
 /***/ "../modules/forms/submissions/assets/js/admin/app.js":
 /*!***********************************************************!*\
   !*** ../modules/forms/submissions/assets/js/admin/app.js ***!
@@ -1319,7 +1551,9 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.BulkActionSelect = BulkActionSelect;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 const {
   useState,
   useCallback
@@ -1360,11 +1594,11 @@ function BulkActionSelect(props) {
   }));
 }
 BulkActionSelect.propTypes = {
-  className: _propTypes.default.string,
-  actions: _propTypes.default.arrayOf(_propTypes.default.shape({
-    label: _propTypes.default.string.isRequired,
-    value: _propTypes.default.string.isRequired,
-    onApply: _propTypes.default.func.isRequired
+  className: PropTypes.string,
+  actions: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    onApply: PropTypes.func.isRequired
   })).isRequired
 };
 BulkActionSelect.defaultProps = {
@@ -1388,7 +1622,9 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = Bulk;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 const {
   useCallback
 } = _react.default;
@@ -1404,9 +1640,9 @@ function Bulk(props) {
   });
 }
 Bulk.propTypes = {
-  checkedGroup: _propTypes.default.array.isRequired,
-  allValues: _propTypes.default.array.isRequired,
-  onChange: _propTypes.default.func.isRequired
+  checkedGroup: PropTypes.array.isRequired,
+  allValues: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
 /***/ }),
@@ -1427,7 +1663,9 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = Checkbox;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _bulk = _interopRequireDefault(__webpack_require__(/*! ./bulk */ "../modules/forms/submissions/assets/js/admin/components/checkbox/bulk.js"));
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 const {
   useCallback
 } = _react.default;
@@ -1443,9 +1681,9 @@ function Checkbox(props) {
   });
 }
 Checkbox.propTypes = {
-  checkedGroup: _propTypes.default.array.isRequired,
-  value: _propTypes.default.number.isRequired,
-  onChange: _propTypes.default.func.isRequired
+  checkedGroup: PropTypes.array.isRequired,
+  value: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 Checkbox.Bulk = _bulk.default;
 
@@ -1955,7 +2193,7 @@ const {
  * @see https://developer.mozilla.org/en-US/docs/Mozilla/Localization/Web_Localizability/Creating_localizable_web_applications#D'ont_use_text_as_decoration
  *
  * @param {any} props
- * @return {JSX.Element|string} -
+ * @return {JSX.Element|string} Element
  * @class
  */
 function Pagination(props) {
@@ -2276,7 +2514,7 @@ const DEFAULT_DEBOUNCE_TIMEOUT = 600;
  * Third render - the user type and the debounce get activate, and then it send the value up in the component tree.
  *
  * @param {any} props
- * @return {JSX.Element} -
+ * @return {JSX.Element} Element
  * @class
  */
 function SearchBox(props) {
@@ -2346,7 +2584,9 @@ const {
   useState
 } = _react.default;
 function SubmissionRow(props) {
+  var _props$item, _props$item$main;
   const [isMobileRowOpen, setIsMobileRowOpen] = useState(false);
+  const mainValue = ((_props$item = props.item) === null || _props$item === void 0 ? void 0 : (_props$item$main = _props$item.main) === null || _props$item$main === void 0 ? void 0 : _props$item$main.value) || __('Unknown', 'elementor-pro');
   return /*#__PURE__*/_react.default.createElement(_wpTable.default.Row, {
     className: isMobileRowOpen ? 'is-expanded' : '',
     style: {
@@ -2357,10 +2597,10 @@ function SubmissionRow(props) {
     className: "check-column"
   }, props.checkBoxComponent), /*#__PURE__*/_react.default.createElement(_wpTable.default.Cell, {
     className: "has-row-actions column-primary"
-  }, 'trash' === props.item.status ? props.item.main.value : /*#__PURE__*/_react.default.createElement(_link.default, {
+  }, 'trash' === props.item.status ? mainValue : /*#__PURE__*/_react.default.createElement(_link.default, {
     to: `/${props.item.id}`,
     "aria-label": "View"
-  }, props.item.main.value), props.rowActionComponent, /*#__PURE__*/_react.default.createElement("button", {
+  }, mainValue), props.rowActionComponent, /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
     className: "toggle-row",
     onClick: () => setIsMobileRowOpen(prev => !prev)
@@ -3323,7 +3563,7 @@ const NoticesContext = createContext({
 /**
  * Use Notifications context.
  *
- * @return {{}} -
+ * @return {{}} Notices context
  */
 function useNoticesContext() {
   return useContext(NoticesContext);
@@ -3333,7 +3573,7 @@ function useNoticesContext() {
  * Notification Provider.
  *
  * @param {any} props
- * @return {JSX.Element} -
+ * @return {JSX.Element} Element
  * @class
  */
 function NoticesProvider(props) {
@@ -3430,7 +3670,7 @@ const SettingsContext = createContext({});
 /**
  * Consume the context
  *
- * @return {{emptyTrashDays: number}} -
+ * @return {{emptyTrashDays: number}} Settings context
  */
 function useSettingsContext() {
   return useContext(SettingsContext);
@@ -3440,7 +3680,7 @@ function useSettingsContext() {
  * Settings Provider
  *
  * @param {any} props
- * @return {JSX.Element} -
+ * @return {JSX.Element} Element
  * @class
  */
 function SettingsProvider(props) {
@@ -3755,7 +3995,7 @@ const defaultOptions = {
  * Export functionality
  *
  * @param {any} hookOptions
- * @return {(any|{mode: (string), progress: {success: number, count: number}, status: string})[]} -
+ * @return {(any|{mode: (string), progress: {success: number, count: number}, status: string})[]} [ exportSubmissions, { mode, progress, status: exportStatus } ]
  */
 function useExport(hookOptions) {
   const options = useMemo(() => ({
@@ -3835,7 +4075,7 @@ function useExport(hookOptions) {
  * @param {Array}   response
  * @param {any}     current
  * @param {boolean} shouldSaveHeaders
- * @return {any} -
+ * @return {any} Form results
  */
 function mergeFormExportData(response, current, shouldSaveHeaders) {
   response.forEach(formResult => {
@@ -3895,7 +4135,7 @@ function downloadExportsResults(dataResults) {
  *
  * @param {any}  formResult
  * @param {Date} currentDate
- * @return {{filename: string, blob: Blob}} -
+ * @return {{filename: string, blob: Blob}} Filename and blob
  */
 function transformFormResultIntoBlob(formResult, currentDate) {
   return {
@@ -3975,7 +4215,7 @@ __webpack_require__(/*! core-js/modules/es.error.cause.js */ "../node_modules/co
  * @param {any} methods
  * @param {any} initialState
  * @param {any} init
- * @return {Array<any>} -
+ * @return {Array<any>} [state, actions, dispatch]
  */
 function useMethodsReducer(methods, initialState) {
   let init = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
@@ -3993,7 +4233,7 @@ function useMethodsReducer(methods, initialState) {
  *
  * @param {any}      methods
  * @param {Function} dispatch
- * @return {{}} -
+ * @return {{}} Actions
  */
 function generateActions(methods, dispatch) {
   return Object.keys(methods).reduce((current, type) => {
@@ -4053,7 +4293,7 @@ let currentFlatQuery = {};
  *
  * @param {any}    command
  * @param {Object} options
- * @return {{fetchData: any, data: any, meta: any, query: any, actions: {setOrder: any, setFilter: any, setPage: any}}} -
+ * @return {{fetchData: any, data: any, meta: any, query: any, actions: {setOrder: any, setFilter: any, setPage: any}}} REST data
  */
 function useRestDataList(command) {
   let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -4148,7 +4388,7 @@ function useRestDataList(command) {
 /**
  * A reducer for the query of the rest list fetch.
  *
- * @return {{perPage: any, page: number}|{filter: any, page: number}|{ready: boolean}|{page: any}|(any|{})|Array|{sort: any}} -
+ * @return {{perPage: any, page: number}|{filter: any, page: number}|{ready: boolean}|{page: any}|(any|{})|Array|{sort: any}} { query, flatQuery, actions }
  */
 function useQuery() {
   const [query, actions] = (0, _useMethodsReducer.default)({
@@ -4238,7 +4478,7 @@ const {
  * Manage the router query string base on "hash" history.
  *
  * @param {string[]} queryArgs
- * @return {Array<any, any>} -
+ * @return {Array<any, any>} [ query, setQuery ]
  */
 function useRouterQueryString() {
   let queryArgs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -4828,7 +5068,7 @@ const {
   useMemo
 } = _react.default;
 function Item(props) {
-  var _data$form2;
+  var _data$form2, _data$values;
   const [{
       data
     }, setFetchResult] = useState({
@@ -4945,7 +5185,7 @@ function Item(props) {
     }, isEditMode ? __('Cancel', 'elementor-pro') : __('Edit', 'elementor-pro')))
   }, /*#__PURE__*/_react.default.createElement(_wpTable.default, {
     className: "e-form-submissions-item-table"
-  }, /*#__PURE__*/_react.default.createElement(_wpTable.default.Body, null, data.values.map(value => {
+  }, /*#__PURE__*/_react.default.createElement(_wpTable.default.Body, null, ((_data$values = data.values) === null || _data$values === void 0 ? void 0 : _data$values.length) > 0 ? data.values.map(value => {
     var _fields$value$key;
     return /*#__PURE__*/_react.default.createElement(_wpTable.default.Row, {
       key: value.id
@@ -4961,7 +5201,9 @@ function Item(props) {
         [id]: fieldValue
       }))
     })));
-  }))))), data.form_actions_log && /*#__PURE__*/_react.default.createElement(_formActionsLog.default, {
+  }) : /*#__PURE__*/_react.default.createElement(_wpTable.default.Row, null, /*#__PURE__*/_react.default.createElement(_wpTable.default.Cell, {
+    colSpan: "2"
+  }, __('No data', 'elementor-pro'))))))), data.form_actions_log && /*#__PURE__*/_react.default.createElement(_formActionsLog.default, {
     actions: data.form_actions_log
   })), /*#__PURE__*/_react.default.createElement("div", {
     className: "postbox-container",
@@ -5097,6 +5339,8 @@ function downloadBlob(blob) {
   \*******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var tryToString = __webpack_require__(/*! ../internals/try-to-string */ "../node_modules/core-js/internals/try-to-string.js");
 
@@ -5117,6 +5361,8 @@ module.exports = function (argument) {
   \*****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 
 var $String = String;
@@ -5135,6 +5381,8 @@ module.exports = function (argument) {
   !*** ../node_modules/core-js/internals/an-object.js ***!
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
 
@@ -5156,6 +5404,8 @@ module.exports = function (argument) {
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "../node_modules/core-js/internals/to-indexed-object.js");
 var toAbsoluteIndex = __webpack_require__(/*! ../internals/to-absolute-index */ "../node_modules/core-js/internals/to-absolute-index.js");
 var lengthOfArrayLike = __webpack_require__(/*! ../internals/length-of-array-like */ "../node_modules/core-js/internals/length-of-array-like.js");
@@ -5169,10 +5419,10 @@ var createMethod = function (IS_INCLUDES) {
     var value;
     // Array#includes uses SameValueZero equality algorithm
     // eslint-disable-next-line no-self-compare -- NaN check
-    if (IS_INCLUDES && el != el) while (length > index) {
+    if (IS_INCLUDES && el !== el) while (length > index) {
       value = O[index++];
       // eslint-disable-next-line no-self-compare -- NaN check
-      if (value != value) return true;
+      if (value !== value) return true;
     // Array#indexOf ignores holes, Array#includes - not
     } else for (;length > index; index++) {
       if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0;
@@ -5198,10 +5448,12 @@ module.exports = {
   \********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var uncurryThisRaw = __webpack_require__(/*! ../internals/function-uncurry-this-raw */ "../node_modules/core-js/internals/function-uncurry-this-raw.js");
+"use strict";
 
-var toString = uncurryThisRaw({}.toString);
-var stringSlice = uncurryThisRaw(''.slice);
+var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
+
+var toString = uncurryThis({}.toString);
+var stringSlice = uncurryThis(''.slice);
 
 module.exports = function (it) {
   return stringSlice(toString(it), 8, -1);
@@ -5216,6 +5468,8 @@ module.exports = function (it) {
   \****************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var TO_STRING_TAG_SUPPORT = __webpack_require__(/*! ../internals/to-string-tag-support */ "../node_modules/core-js/internals/to-string-tag-support.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var classofRaw = __webpack_require__(/*! ../internals/classof-raw */ "../node_modules/core-js/internals/classof-raw.js");
@@ -5225,7 +5479,7 @@ var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var $Object = Object;
 
 // ES3 wrong here
-var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) == 'Arguments';
+var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) === 'Arguments';
 
 // fallback for IE11 Script Access Denied error
 var tryGet = function (it, key) {
@@ -5243,7 +5497,7 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
     // builtinTag case
     : CORRECT_ARGUMENTS ? classofRaw(O)
     // ES3 arguments fallback
-    : (result = classofRaw(O)) == 'Object' && isCallable(O.callee) ? 'Arguments' : result;
+    : (result = classofRaw(O)) === 'Object' && isCallable(O.callee) ? 'Arguments' : result;
 };
 
 
@@ -5254,6 +5508,8 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
   !*** ../node_modules/core-js/internals/copy-constructor-properties.js ***!
   \************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
 var ownKeys = __webpack_require__(/*! ../internals/own-keys */ "../node_modules/core-js/internals/own-keys.js");
@@ -5281,6 +5537,8 @@ module.exports = function (target, source, exceptions) {
   \***************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js");
 var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "../node_modules/core-js/internals/create-property-descriptor.js");
@@ -5301,6 +5559,8 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
   \***********************************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = function (bitmap, value) {
   return {
     enumerable: !(bitmap & 1),
@@ -5318,6 +5578,8 @@ module.exports = function (bitmap, value) {
   !*** ../node_modules/core-js/internals/define-built-in.js ***!
   \************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js");
@@ -5356,6 +5618,8 @@ module.exports = function (O, key, value, options) {
   \*******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 
 // eslint-disable-next-line es/no-object-defineproperty -- safe
@@ -5378,12 +5642,14 @@ module.exports = function (key, value) {
   \********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
-  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
+  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] !== 7;
 });
 
 
@@ -5395,9 +5661,12 @@ module.exports = !fails(function () {
   \*********************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 var documentAll = typeof document == 'object' && document.all;
 
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+// eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
 var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
 
 module.exports = {
@@ -5413,6 +5682,8 @@ module.exports = {
   !*** ../node_modules/core-js/internals/document-create-element.js ***!
   \********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
@@ -5432,11 +5703,11 @@ module.exports = function (it) {
 /*!**************************************************************!*\
   !*** ../node_modules/core-js/internals/engine-user-agent.js ***!
   \**************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module) => {
 
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
+"use strict";
 
-module.exports = getBuiltIn('navigator', 'userAgent') || '';
+module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
 
 
 /***/ }),
@@ -5446,6 +5717,8 @@ module.exports = getBuiltIn('navigator', 'userAgent') || '';
   !*** ../node_modules/core-js/internals/engine-v8-version.js ***!
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var userAgent = __webpack_require__(/*! ../internals/engine-user-agent */ "../node_modules/core-js/internals/engine-user-agent.js");
@@ -5484,6 +5757,8 @@ module.exports = version;
   \**********************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 // IE8- don't enum bug keys
 module.exports = [
   'constructor',
@@ -5504,12 +5779,15 @@ module.exports = [
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 
 var $Error = Error;
 var replace = uncurryThis(''.replace);
 
 var TEST = (function (arg) { return String($Error(arg).stack); })('zxcasd');
+// eslint-disable-next-line redos/no-vulnerable -- safe
 var V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
 var IS_V8_OR_CHAKRA_STACK = V8_OR_CHAKRA_STACK_ENTRY.test(TEST);
 
@@ -5522,11 +5800,38 @@ module.exports = function (stack, dropEntries) {
 
 /***/ }),
 
+/***/ "../node_modules/core-js/internals/error-stack-install.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/core-js/internals/error-stack-install.js ***!
+  \****************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "../node_modules/core-js/internals/create-non-enumerable-property.js");
+var clearErrorStack = __webpack_require__(/*! ../internals/error-stack-clear */ "../node_modules/core-js/internals/error-stack-clear.js");
+var ERROR_STACK_INSTALLABLE = __webpack_require__(/*! ../internals/error-stack-installable */ "../node_modules/core-js/internals/error-stack-installable.js");
+
+// non-standard V8
+var captureStackTrace = Error.captureStackTrace;
+
+module.exports = function (error, C, stack, dropEntries) {
+  if (ERROR_STACK_INSTALLABLE) {
+    if (captureStackTrace) captureStackTrace(error, C);
+    else createNonEnumerableProperty(error, 'stack', clearErrorStack(stack, dropEntries));
+  }
+};
+
+
+/***/ }),
+
 /***/ "../node_modules/core-js/internals/error-stack-installable.js":
 /*!********************************************************************!*\
   !*** ../node_modules/core-js/internals/error-stack-installable.js ***!
   \********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "../node_modules/core-js/internals/create-property-descriptor.js");
@@ -5547,6 +5852,8 @@ module.exports = !fails(function () {
   !*** ../node_modules/core-js/internals/export.js ***!
   \***************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var getOwnPropertyDescriptor = (__webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "../node_modules/core-js/internals/object-get-own-property-descriptor.js").f);
@@ -5612,6 +5919,8 @@ module.exports = function (options, source) {
   \**************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = function (exec) {
   try {
     return !!exec();
@@ -5628,6 +5937,8 @@ module.exports = function (exec) {
   !*** ../node_modules/core-js/internals/function-apply.js ***!
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "../node_modules/core-js/internals/function-bind-native.js");
 
@@ -5649,6 +5960,8 @@ module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? c
   \*****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 
 module.exports = !fails(function () {
@@ -5667,6 +5980,8 @@ module.exports = !fails(function () {
   \**********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "../node_modules/core-js/internals/function-bind-native.js");
 
 var call = Function.prototype.call;
@@ -5683,6 +5998,8 @@ module.exports = NATIVE_BIND ? call.bind(call) : function () {
   !*** ../node_modules/core-js/internals/function-name.js ***!
   \**********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -5705,11 +6022,34 @@ module.exports = {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/function-uncurry-this-raw.js":
-/*!**********************************************************************!*\
-  !*** ../node_modules/core-js/internals/function-uncurry-this-raw.js ***!
-  \**********************************************************************/
+/***/ "../node_modules/core-js/internals/function-uncurry-this-accessor.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/core-js/internals/function-uncurry-this-accessor.js ***!
+  \***************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
+var aCallable = __webpack_require__(/*! ../internals/a-callable */ "../node_modules/core-js/internals/a-callable.js");
+
+module.exports = function (object, key, method) {
+  try {
+    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+    return uncurryThis(aCallable(Object.getOwnPropertyDescriptor(object, key)[method]));
+  } catch (error) { /* empty */ }
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/internals/function-uncurry-this.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/core-js/internals/function-uncurry-this.js ***!
+  \******************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "../node_modules/core-js/internals/function-bind-native.js");
 
@@ -5726,30 +6066,13 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/function-uncurry-this.js":
-/*!******************************************************************!*\
-  !*** ../node_modules/core-js/internals/function-uncurry-this.js ***!
-  \******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var classofRaw = __webpack_require__(/*! ../internals/classof-raw */ "../node_modules/core-js/internals/classof-raw.js");
-var uncurryThisRaw = __webpack_require__(/*! ../internals/function-uncurry-this-raw */ "../node_modules/core-js/internals/function-uncurry-this-raw.js");
-
-module.exports = function (fn) {
-  // Nashorn bug:
-  //   https://github.com/zloirock/core-js/issues/1128
-  //   https://github.com/zloirock/core-js/issues/1130
-  if (classofRaw(fn) === 'Function') return uncurryThisRaw(fn);
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/get-built-in.js":
 /*!*********************************************************!*\
   !*** ../node_modules/core-js/internals/get-built-in.js ***!
   \*********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -5771,6 +6094,8 @@ module.exports = function (namespace, method) {
   \*******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var aCallable = __webpack_require__(/*! ../internals/a-callable */ "../node_modules/core-js/internals/a-callable.js");
 var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "../node_modules/core-js/internals/is-null-or-undefined.js");
 
@@ -5788,10 +6113,12 @@ module.exports = function (V, P) {
 /*!***************************************************!*\
   !*** ../node_modules/core-js/internals/global.js ***!
   \***************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
 
 var check = function (it) {
-  return it && it.Math == Math && it;
+  return it && it.Math === Math && it;
 };
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -5803,7 +6130,7 @@ module.exports =
   check(typeof self == 'object' && self) ||
   check(typeof __webpack_require__.g == 'object' && __webpack_require__.g) ||
   // eslint-disable-next-line no-new-func -- fallback
-  (function () { return this; })() || Function('return this')();
+  (function () { return this; })() || this || Function('return this')();
 
 
 /***/ }),
@@ -5813,6 +6140,8 @@ module.exports =
   !*** ../node_modules/core-js/internals/has-own-property.js ***!
   \*************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var toObject = __webpack_require__(/*! ../internals/to-object */ "../node_modules/core-js/internals/to-object.js");
@@ -5835,6 +6164,8 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
   \********************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = {};
 
 
@@ -5846,6 +6177,8 @@ module.exports = {};
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 var createElement = __webpack_require__(/*! ../internals/document-create-element */ "../node_modules/core-js/internals/document-create-element.js");
@@ -5855,7 +6188,7 @@ module.exports = !DESCRIPTORS && !fails(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
     get: function () { return 7; }
-  }).a != 7;
+  }).a !== 7;
 });
 
 
@@ -5866,6 +6199,8 @@ module.exports = !DESCRIPTORS && !fails(function () {
   !*** ../node_modules/core-js/internals/indexed-object.js ***!
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
@@ -5880,7 +6215,7 @@ module.exports = fails(function () {
   // eslint-disable-next-line no-prototype-builtins -- safe
   return !$Object('z').propertyIsEnumerable(0);
 }) ? function (it) {
-  return classof(it) == 'String' ? split(it, '') : $Object(it);
+  return classof(it) === 'String' ? split(it, '') : $Object(it);
 } : $Object;
 
 
@@ -5891,6 +6226,8 @@ module.exports = fails(function () {
   !*** ../node_modules/core-js/internals/inherit-if-required.js ***!
   \****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
@@ -5920,6 +6257,8 @@ module.exports = function ($this, dummy, Wrapper) {
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var store = __webpack_require__(/*! ../internals/shared-store */ "../node_modules/core-js/internals/shared-store.js");
@@ -5944,6 +6283,8 @@ module.exports = store.inspectSource;
   \****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
 var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "../node_modules/core-js/internals/create-non-enumerable-property.js");
 
@@ -5963,6 +6304,8 @@ module.exports = function (O, options) {
   !*** ../node_modules/core-js/internals/internal-state.js ***!
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var NATIVE_WEAK_MAP = __webpack_require__(/*! ../internals/weak-map-basic-detection */ "../node_modules/core-js/internals/weak-map-basic-detection.js");
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
@@ -6044,6 +6387,8 @@ module.exports = {
   \********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var $documentAll = __webpack_require__(/*! ../internals/document-all */ "../node_modules/core-js/internals/document-all.js");
 
 var documentAll = $documentAll.all;
@@ -6065,6 +6410,8 @@ module.exports = $documentAll.IS_HTMLDDA ? function (argument) {
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 
@@ -6072,8 +6419,8 @@ var replacement = /#|\.prototype\./;
 
 var isForced = function (feature, detection) {
   var value = data[normalize(feature)];
-  return value == POLYFILL ? true
-    : value == NATIVE ? false
+  return value === POLYFILL ? true
+    : value === NATIVE ? false
     : isCallable(detection) ? fails(detection)
     : !!detection;
 };
@@ -6097,6 +6444,8 @@ module.exports = isForced;
   \*****************************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 // we can't use just `it == null` since of `document.all` special case
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
 module.exports = function (it) {
@@ -6111,6 +6460,8 @@ module.exports = function (it) {
   !*** ../node_modules/core-js/internals/is-object.js ***!
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var $documentAll = __webpack_require__(/*! ../internals/document-all */ "../node_modules/core-js/internals/document-all.js");
@@ -6132,6 +6483,8 @@ module.exports = $documentAll.IS_HTMLDDA ? function (it) {
   \****************************************************/
 /***/ ((module) => {
 
+"use strict";
+
 module.exports = false;
 
 
@@ -6142,6 +6495,8 @@ module.exports = false;
   !*** ../node_modules/core-js/internals/is-symbol.js ***!
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -6166,6 +6521,8 @@ module.exports = USE_SYMBOL_AS_UID ? function (it) {
   \*****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toLength = __webpack_require__(/*! ../internals/to-length */ "../node_modules/core-js/internals/to-length.js");
 
 // `LengthOfArrayLike` abstract operation
@@ -6183,6 +6540,9 @@ module.exports = function (obj) {
   \**********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
+var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -6193,8 +6553,12 @@ var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+var $String = String;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
+var stringSlice = uncurryThis(''.slice);
+var replace = uncurryThis(''.replace);
+var join = uncurryThis([].join);
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
@@ -6203,8 +6567,8 @@ var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
 var TEMPLATE = String(String).split('String');
 
 var makeBuiltIn = module.exports = function (value, name, options) {
-  if (String(name).slice(0, 7) === 'Symbol(') {
-    name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+  if (stringSlice($String(name), 0, 7) === 'Symbol(') {
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
   }
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;
@@ -6223,7 +6587,7 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   } catch (error) { /* empty */ }
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
-    state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
+    state.source = join(TEMPLATE, typeof name == 'string' ? name : '');
   } return value;
 };
 
@@ -6241,6 +6605,8 @@ Function.prototype.toString = makeBuiltIn(function toString() {
   !*** ../node_modules/core-js/internals/math-trunc.js ***!
   \*******************************************************/
 /***/ ((module) => {
+
+"use strict";
 
 var ceil = Math.ceil;
 var floor = Math.floor;
@@ -6262,6 +6628,8 @@ module.exports = Math.trunc || function trunc(x) {
   \**********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toString = __webpack_require__(/*! ../internals/to-string */ "../node_modules/core-js/internals/to-string.js");
 
 module.exports = function (argument, $default) {
@@ -6276,6 +6644,8 @@ module.exports = function (argument, $default) {
   !*** ../node_modules/core-js/internals/object-define-property.js ***!
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
 
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var IE8_DOM_DEFINE = __webpack_require__(/*! ../internals/ie8-dom-define */ "../node_modules/core-js/internals/ie8-dom-define.js");
@@ -6330,6 +6700,8 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
   \*******************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
+
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var call = __webpack_require__(/*! ../internals/function-call */ "../node_modules/core-js/internals/function-call.js");
 var propertyIsEnumerableModule = __webpack_require__(/*! ../internals/object-property-is-enumerable */ "../node_modules/core-js/internals/object-property-is-enumerable.js");
@@ -6362,6 +6734,8 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
   \**************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
+
 var internalObjectKeys = __webpack_require__(/*! ../internals/object-keys-internal */ "../node_modules/core-js/internals/object-keys-internal.js");
 var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "../node_modules/core-js/internals/enum-bug-keys.js");
 
@@ -6383,6 +6757,8 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   \****************************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
+
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
 exports.f = Object.getOwnPropertySymbols;
 
@@ -6394,6 +6770,8 @@ exports.f = Object.getOwnPropertySymbols;
   !*** ../node_modules/core-js/internals/object-is-prototype-of.js ***!
   \*******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 
@@ -6407,6 +6785,8 @@ module.exports = uncurryThis({}.isPrototypeOf);
   !*** ../node_modules/core-js/internals/object-keys-internal.js ***!
   \*****************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -6463,8 +6843,10 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
   \********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 /* eslint-disable no-proto -- safe */
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
+var uncurryThisAccessor = __webpack_require__(/*! ../internals/function-uncurry-this-accessor */ "../node_modules/core-js/internals/function-uncurry-this-accessor.js");
 var anObject = __webpack_require__(/*! ../internals/an-object */ "../node_modules/core-js/internals/an-object.js");
 var aPossiblePrototype = __webpack_require__(/*! ../internals/a-possible-prototype */ "../node_modules/core-js/internals/a-possible-prototype.js");
 
@@ -6477,8 +6859,7 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
   var test = {};
   var setter;
   try {
-    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-    setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
+    setter = uncurryThisAccessor(Object.prototype, '__proto__', 'set');
     setter(test, []);
     CORRECT_SETTER = test instanceof Array;
   } catch (error) { /* empty */ }
@@ -6499,6 +6880,8 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
   !*** ../node_modules/core-js/internals/ordinary-to-primitive.js ***!
   \******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var call = __webpack_require__(/*! ../internals/function-call */ "../node_modules/core-js/internals/function-call.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -6525,6 +6908,8 @@ module.exports = function (input, pref) {
   \*****************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 var getOwnPropertyNamesModule = __webpack_require__(/*! ../internals/object-get-own-property-names */ "../node_modules/core-js/internals/object-get-own-property-names.js");
@@ -6549,6 +6934,8 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
   \***********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var defineProperty = (__webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js").f);
 
 module.exports = function (Target, Source, key) {
@@ -6567,6 +6954,8 @@ module.exports = function (Target, Source, key) {
   !*** ../node_modules/core-js/internals/require-object-coercible.js ***!
   \*********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "../node_modules/core-js/internals/is-null-or-undefined.js");
 
@@ -6588,6 +6977,8 @@ module.exports = function (it) {
   \*******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var shared = __webpack_require__(/*! ../internals/shared */ "../node_modules/core-js/internals/shared.js");
 var uid = __webpack_require__(/*! ../internals/uid */ "../node_modules/core-js/internals/uid.js");
 
@@ -6606,6 +6997,8 @@ module.exports = function (key) {
   \*********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var defineGlobalProperty = __webpack_require__(/*! ../internals/define-global-property */ "../node_modules/core-js/internals/define-global-property.js");
 
@@ -6623,16 +7016,18 @@ module.exports = store;
   \***************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "../node_modules/core-js/internals/is-pure.js");
 var store = __webpack_require__(/*! ../internals/shared-store */ "../node_modules/core-js/internals/shared-store.js");
 
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.26.0',
+  version: '3.32.2',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.26.0/LICENSE',
+  copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.32.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -6645,16 +7040,23 @@ var store = __webpack_require__(/*! ../internals/shared-store */ "../node_module
   \*************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 /* eslint-disable es/no-symbol -- required for testing */
 var V8_VERSION = __webpack_require__(/*! ../internals/engine-v8-version */ "../node_modules/core-js/internals/engine-v8-version.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
+var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
+
+var $String = global.String;
 
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
-  var symbol = Symbol();
+  var symbol = Symbol('symbol detection');
   // Chrome 38 Symbol has incorrect toString conversion
   // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-  return !String(symbol) || !(Object(symbol) instanceof Symbol) ||
+  // nb: Do not call `String` directly to avoid this being optimized out to `symbol+''` which will,
+  // of course, fail.
+  return !$String(symbol) || !(Object(symbol) instanceof Symbol) ||
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
@@ -6667,6 +7069,8 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
   !*** ../node_modules/core-js/internals/to-absolute-index.js ***!
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var toIntegerOrInfinity = __webpack_require__(/*! ../internals/to-integer-or-infinity */ "../node_modules/core-js/internals/to-integer-or-infinity.js");
 
@@ -6690,6 +7094,8 @@ module.exports = function (index, length) {
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 // toObject with fallback for non-array-like ES3 strings
 var IndexedObject = __webpack_require__(/*! ../internals/indexed-object */ "../node_modules/core-js/internals/indexed-object.js");
 var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "../node_modules/core-js/internals/require-object-coercible.js");
@@ -6706,6 +7112,8 @@ module.exports = function (it) {
   !*** ../node_modules/core-js/internals/to-integer-or-infinity.js ***!
   \*******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var trunc = __webpack_require__(/*! ../internals/math-trunc */ "../node_modules/core-js/internals/math-trunc.js");
 
@@ -6726,6 +7134,8 @@ module.exports = function (argument) {
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toIntegerOrInfinity = __webpack_require__(/*! ../internals/to-integer-or-infinity */ "../node_modules/core-js/internals/to-integer-or-infinity.js");
 
 var min = Math.min;
@@ -6745,6 +7155,8 @@ module.exports = function (argument) {
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "../node_modules/core-js/internals/require-object-coercible.js");
 
 var $Object = Object;
@@ -6763,6 +7175,8 @@ module.exports = function (argument) {
   !*** ../node_modules/core-js/internals/to-primitive.js ***!
   \*********************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var call = __webpack_require__(/*! ../internals/function-call */ "../node_modules/core-js/internals/function-call.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "../node_modules/core-js/internals/is-object.js");
@@ -6799,6 +7213,8 @@ module.exports = function (input, pref) {
   \************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var toPrimitive = __webpack_require__(/*! ../internals/to-primitive */ "../node_modules/core-js/internals/to-primitive.js");
 var isSymbol = __webpack_require__(/*! ../internals/is-symbol */ "../node_modules/core-js/internals/is-symbol.js");
 
@@ -6818,6 +7234,8 @@ module.exports = function (argument) {
   \******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "../node_modules/core-js/internals/well-known-symbol.js");
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
@@ -6836,6 +7254,8 @@ module.exports = String(test) === '[object z]';
   \******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var classof = __webpack_require__(/*! ../internals/classof */ "../node_modules/core-js/internals/classof.js");
 
 var $String = String;
@@ -6853,6 +7273,8 @@ module.exports = function (argument) {
   !*** ../node_modules/core-js/internals/try-to-string.js ***!
   \**********************************************************/
 /***/ ((module) => {
+
+"use strict";
 
 var $String = String;
 
@@ -6873,6 +7295,8 @@ module.exports = function (argument) {
   \************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "../node_modules/core-js/internals/function-uncurry-this.js");
 
 var id = 0;
@@ -6892,6 +7316,8 @@ module.exports = function (key) {
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 /* eslint-disable es/no-symbol -- required for testing */
 var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/symbol-constructor-detection */ "../node_modules/core-js/internals/symbol-constructor-detection.js");
 
@@ -6908,6 +7334,8 @@ module.exports = NATIVE_SYMBOL
   \********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
 
@@ -6918,7 +7346,7 @@ module.exports = DESCRIPTORS && fails(function () {
   return Object.defineProperty(function () { /* empty */ }, 'prototype', {
     value: 42,
     writable: false
-  }).prototype != 42;
+  }).prototype !== 42;
 });
 
 
@@ -6929,6 +7357,8 @@ module.exports = DESCRIPTORS && fails(function () {
   !*** ../node_modules/core-js/internals/weak-map-basic-detection.js ***!
   \*********************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var isCallable = __webpack_require__(/*! ../internals/is-callable */ "../node_modules/core-js/internals/is-callable.js");
@@ -6946,6 +7376,8 @@ module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
   \**************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
 var shared = __webpack_require__(/*! ../internals/shared */ "../node_modules/core-js/internals/shared.js");
 var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "../node_modules/core-js/internals/has-own-property.js");
@@ -6953,21 +7385,15 @@ var uid = __webpack_require__(/*! ../internals/uid */ "../node_modules/core-js/i
 var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/symbol-constructor-detection */ "../node_modules/core-js/internals/symbol-constructor-detection.js");
 var USE_SYMBOL_AS_UID = __webpack_require__(/*! ../internals/use-symbol-as-uid */ "../node_modules/core-js/internals/use-symbol-as-uid.js");
 
-var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
-var symbolFor = Symbol && Symbol['for'];
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
+var WellKnownSymbolsStore = shared('wks');
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
-  if (!hasOwn(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
-    var description = 'Symbol.' + name;
-    if (NATIVE_SYMBOL && hasOwn(Symbol, name)) {
-      WellKnownSymbolsStore[name] = Symbol[name];
-    } else if (USE_SYMBOL_AS_UID && symbolFor) {
-      WellKnownSymbolsStore[name] = symbolFor(description);
-    } else {
-      WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
-    }
+  if (!hasOwn(WellKnownSymbolsStore, name)) {
+    WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol, name)
+      ? Symbol[name]
+      : createWellKnownSymbol('Symbol.' + name);
   } return WellKnownSymbolsStore[name];
 };
 
@@ -6992,8 +7418,7 @@ var proxyAccessor = __webpack_require__(/*! ../internals/proxy-accessor */ "../n
 var inheritIfRequired = __webpack_require__(/*! ../internals/inherit-if-required */ "../node_modules/core-js/internals/inherit-if-required.js");
 var normalizeStringArgument = __webpack_require__(/*! ../internals/normalize-string-argument */ "../node_modules/core-js/internals/normalize-string-argument.js");
 var installErrorCause = __webpack_require__(/*! ../internals/install-error-cause */ "../node_modules/core-js/internals/install-error-cause.js");
-var clearErrorStack = __webpack_require__(/*! ../internals/error-stack-clear */ "../node_modules/core-js/internals/error-stack-clear.js");
-var ERROR_STACK_INSTALLABLE = __webpack_require__(/*! ../internals/error-stack-installable */ "../node_modules/core-js/internals/error-stack-installable.js");
+var installErrorStack = __webpack_require__(/*! ../internals/error-stack-install */ "../node_modules/core-js/internals/error-stack-install.js");
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
 var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "../node_modules/core-js/internals/is-pure.js");
 
@@ -7019,7 +7444,7 @@ module.exports = function (FULL_NAME, wrapper, FORCED, IS_AGGREGATE_ERROR) {
     var message = normalizeStringArgument(IS_AGGREGATE_ERROR ? b : a, undefined);
     var result = IS_AGGREGATE_ERROR ? new OriginalError(a) : new OriginalError();
     if (message !== undefined) createNonEnumerableProperty(result, 'message', message);
-    if (ERROR_STACK_INSTALLABLE) createNonEnumerableProperty(result, 'stack', clearErrorStack(result.stack, 2));
+    installErrorStack(result, WrappedError, result.stack, 2);
     if (this && isPrototypeOf(OriginalErrorPrototype, this)) inheritIfRequired(result, this, WrappedError);
     if (arguments.length > OPTIONS_POSITION) installErrorCause(result, arguments[OPTIONS_POSITION]);
     return result;
@@ -7057,6 +7482,8 @@ module.exports = function (FULL_NAME, wrapper, FORCED, IS_AGGREGATE_ERROR) {
   \*********************************************************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
+
 /* eslint-disable no-unused-vars -- required for functions `.length` */
 var $ = __webpack_require__(/*! ../internals/export */ "../node_modules/core-js/internals/export.js");
 var global = __webpack_require__(/*! ../internals/global */ "../node_modules/core-js/internals/global.js");
@@ -7082,7 +7509,7 @@ var exportWebAssemblyErrorCauseWrapper = function (ERROR_NAME, wrapper) {
   }
 };
 
-// https://github.com/tc39/proposal-error-cause
+// https://tc39.es/ecma262/#sec-nativeerror
 exportGlobalErrorCauseWrapper('Error', function (init) {
   return function Error(message) { return apply(init, this, arguments); };
 });
@@ -7114,238 +7541,6 @@ exportWebAssemblyErrorCauseWrapper('RuntimeError', function (init) {
   return function RuntimeError(message) { return apply(init, this, arguments); };
 });
 
-
-/***/ }),
-
-/***/ "../node_modules/create-react-context/lib/implementation.js":
-/*!******************************************************************!*\
-  !*** ../node_modules/create-react-context/lib/implementation.js ***!
-  \******************************************************************/
-/***/ ((module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _react = __webpack_require__(/*! react */ "react");
-
-var _react2 = _interopRequireDefault(_react);
-
-var _propTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _gud = __webpack_require__(/*! gud */ "../node_modules/gud/index.js");
-
-var _gud2 = _interopRequireDefault(_gud);
-
-var _warning = __webpack_require__(/*! warning */ "../node_modules/warning/warning.js");
-
-var _warning2 = _interopRequireDefault(_warning);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MAX_SIGNED_31_BIT_INT = 1073741823;
-
-// Inlined Object.is polyfill.
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-function objectIs(x, y) {
-  if (x === y) {
-    return x !== 0 || 1 / x === 1 / y;
-  } else {
-    return x !== x && y !== y;
-  }
-}
-
-function createEventEmitter(value) {
-  var handlers = [];
-  return {
-    on: function on(handler) {
-      handlers.push(handler);
-    },
-    off: function off(handler) {
-      handlers = handlers.filter(function (h) {
-        return h !== handler;
-      });
-    },
-    get: function get() {
-      return value;
-    },
-    set: function set(newValue, changedBits) {
-      value = newValue;
-      handlers.forEach(function (handler) {
-        return handler(value, changedBits);
-      });
-    }
-  };
-}
-
-function onlyChild(children) {
-  return Array.isArray(children) ? children[0] : children;
-}
-
-function createReactContext(defaultValue, calculateChangedBits) {
-  var _Provider$childContex, _Consumer$contextType;
-
-  var contextProp = '__create-react-context-' + (0, _gud2.default)() + '__';
-
-  var Provider = function (_Component) {
-    _inherits(Provider, _Component);
-
-    function Provider() {
-      var _temp, _this, _ret;
-
-      _classCallCheck(this, Provider);
-
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      return _ret = (_temp = (_this = _possibleConstructorReturn(this, _Component.call.apply(_Component, [this].concat(args))), _this), _this.emitter = createEventEmitter(_this.props.value), _temp), _possibleConstructorReturn(_this, _ret);
-    }
-
-    Provider.prototype.getChildContext = function getChildContext() {
-      var _ref;
-
-      return _ref = {}, _ref[contextProp] = this.emitter, _ref;
-    };
-
-    Provider.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-      if (this.props.value !== nextProps.value) {
-        var oldValue = this.props.value;
-        var newValue = nextProps.value;
-        var changedBits = void 0;
-
-        if (objectIs(oldValue, newValue)) {
-          changedBits = 0; // No change
-        } else {
-          changedBits = typeof calculateChangedBits === 'function' ? calculateChangedBits(oldValue, newValue) : MAX_SIGNED_31_BIT_INT;
-          if (true) {
-            (0, _warning2.default)((changedBits & MAX_SIGNED_31_BIT_INT) === changedBits, 'calculateChangedBits: Expected the return value to be a ' + '31-bit integer. Instead received: %s', changedBits);
-          }
-
-          changedBits |= 0;
-
-          if (changedBits !== 0) {
-            this.emitter.set(nextProps.value, changedBits);
-          }
-        }
-      }
-    };
-
-    Provider.prototype.render = function render() {
-      return this.props.children;
-    };
-
-    return Provider;
-  }(_react.Component);
-
-  Provider.childContextTypes = (_Provider$childContex = {}, _Provider$childContex[contextProp] = _propTypes2.default.object.isRequired, _Provider$childContex);
-
-  var Consumer = function (_Component2) {
-    _inherits(Consumer, _Component2);
-
-    function Consumer() {
-      var _temp2, _this2, _ret2;
-
-      _classCallCheck(this, Consumer);
-
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-
-      return _ret2 = (_temp2 = (_this2 = _possibleConstructorReturn(this, _Component2.call.apply(_Component2, [this].concat(args))), _this2), _this2.state = {
-        value: _this2.getValue()
-      }, _this2.onUpdate = function (newValue, changedBits) {
-        var observedBits = _this2.observedBits | 0;
-        if ((observedBits & changedBits) !== 0) {
-          _this2.setState({ value: _this2.getValue() });
-        }
-      }, _temp2), _possibleConstructorReturn(_this2, _ret2);
-    }
-
-    Consumer.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-      var observedBits = nextProps.observedBits;
-
-      this.observedBits = observedBits === undefined || observedBits === null ? MAX_SIGNED_31_BIT_INT // Subscribe to all changes by default
-      : observedBits;
-    };
-
-    Consumer.prototype.componentDidMount = function componentDidMount() {
-      if (this.context[contextProp]) {
-        this.context[contextProp].on(this.onUpdate);
-      }
-      var observedBits = this.props.observedBits;
-
-      this.observedBits = observedBits === undefined || observedBits === null ? MAX_SIGNED_31_BIT_INT // Subscribe to all changes by default
-      : observedBits;
-    };
-
-    Consumer.prototype.componentWillUnmount = function componentWillUnmount() {
-      if (this.context[contextProp]) {
-        this.context[contextProp].off(this.onUpdate);
-      }
-    };
-
-    Consumer.prototype.getValue = function getValue() {
-      if (this.context[contextProp]) {
-        return this.context[contextProp].get();
-      } else {
-        return defaultValue;
-      }
-    };
-
-    Consumer.prototype.render = function render() {
-      return onlyChild(this.props.children)(this.state.value);
-    };
-
-    return Consumer;
-  }(_react.Component);
-
-  Consumer.contextTypes = (_Consumer$contextType = {}, _Consumer$contextType[contextProp] = _propTypes2.default.object, _Consumer$contextType);
-
-
-  return {
-    Provider: Provider,
-    Consumer: Consumer
-  };
-}
-
-exports["default"] = createReactContext;
-module.exports = exports['default'];
-
-/***/ }),
-
-/***/ "../node_modules/create-react-context/lib/index.js":
-/*!*********************************************************!*\
-  !*** ../node_modules/create-react-context/lib/index.js ***!
-  \*********************************************************/
-/***/ ((module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _react = __webpack_require__(/*! react */ "react");
-
-var _react2 = _interopRequireDefault(_react);
-
-var _implementation = __webpack_require__(/*! ./implementation */ "../node_modules/create-react-context/lib/implementation.js");
-
-var _implementation2 = _interopRequireDefault(_implementation);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports["default"] = _react2.default.createContext || _implementation2.default;
-module.exports = exports['default'];
 
 /***/ }),
 
@@ -8945,7 +9140,7 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;

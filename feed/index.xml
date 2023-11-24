@@ -12,7 +12,7 @@
 	<atom:link href="https://l.carlosfernandezdecastro.com/feed/" rel="self" type="application/rss+xml" />
 	<link>https://l.carlosfernandezdecastro.com/</link>
 	<description>Just another WordPress site</description>
-	<lastBuildDate>Wed, 05 Oct 2022 13:21:16 +0000</lastBuildDate>
+	<lastBuildDate>Fri, 24 Nov 2023 13:56:57 +0000</lastBuildDate>
 	<language>en-US</language>
 	<sy:updatePeriod>
 	hourly	</sy:updatePeriod>
@@ -27,28 +27,5 @@
 	<width>32</width>
 	<height>32</height>
 </image> 
-	<item>
-		<title>Hello world!</title>
-		<link>https://l.carlosfernandezdecastro.com/hello-world/</link>
-					<comments>https://l.carlosfernandezdecastro.com/hello-world/#comments</comments>
-		
-		<dc:creator><![CDATA[design@e-me.co]]></dc:creator>
-		<pubDate>Wed, 05 Oct 2022 13:21:16 +0000</pubDate>
-				<category><![CDATA[Uncategorized]]></category>
-		<guid isPermaLink="false">http://cfc.local/?p=1</guid>
-
-					<description><![CDATA[<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
-<p>La entrada <a href="https://l.carlosfernandezdecastro.com/hello-world/">Hello world!</a> se publicó primero en <a href="https://l.carlosfernandezdecastro.com/">CFC</a>.</p>
-]]></description>
-										<content:encoded><![CDATA[
-<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
-<p>La entrada <a href="https://l.carlosfernandezdecastro.com/hello-world/">Hello world!</a> se publicó primero en <a href="https://l.carlosfernandezdecastro.com/">CFC</a>.</p>
-]]></content:encoded>
-					
-					<wfw:commentRss>https://l.carlosfernandezdecastro.com/hello-world/feed/</wfw:commentRss>
-			<slash:comments>1</slash:comments>
-		
-		
-			</item>
-	</channel>
+</channel>
 </rss>
